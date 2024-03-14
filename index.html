@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electricity Prices</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <nav id="menuBar">
+        <a href="#home">Home</a>
+        <a href="#calculator">Calculator</a>
+        <a href="#settings">Settings</a>
+    </nav>
+    <div class="content-container">
+    <div id="introText">
+        <h2>Pörssisähkön hinnat tunneittain</h2>
+    </div>
+
+    
+    <div id="infoGrid">
+        <div>Nykyinen: <span id="currentPrice"></span></div>
+        <div>Keskihinta: <span id="averagePrice"></span></div>
+        <div>Alin: <span id="lowestPrice"></span></div>
+        <div>Korkein: <span id="highestPrice"></span></div>
+    </div>
+    <div id="dateSelection">
+        <button id="yesterday">Yesterday</button>
+        <button id="today" class="selected">Today</button>
+        <button id="tomorrow">Tomorrow</button>
+
+    </div>
+    <div id="priceTable"></div>
+    <div id="notificationArea" style="display: none;"></div>
+    <div id="priceChart">
+        <canvas id="priceCanvas"></canvas>
+
+    <script type="module" src="/js/main.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</div>
+</body>
+</html>
