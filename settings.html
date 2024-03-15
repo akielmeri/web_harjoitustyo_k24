@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <nav id="menuBar">
+        <a href="index.html">Home</a>
+        <a href="settings.html">Settings</a>
+        <a href="about.html">About</a>
+    </nav>
+    <div class="content-container">
+    <div id="settingsText">
+        <h2>Valitse rajat</h2>
+    </div>
+
+    <div id="settingsGrid">
+        <div>
+            <label for="highPrice">Kalliin hinnan raja</label>
+            <input type="number" id="highPrice" value="20">
+        </div>
+        <div>
+            <label for="moderatePrice">Kohtuullisen hinnan raja</label>
+            <input type="number" id="moderatePrice" value="10">
+        </div>
+        <div>
+            <label for="includeTax">Näytä verollinen hinta (24%)</label>
+            <input type="checkbox" id="includeTax" checked>
+        </div>
+    </div>
+        <div id="settingsButtons">
+            <button id="save">Tallenna</button>
+            <button id="cancel">Peruuta</button>
+        </div>
+        <div id="confirmMessageArea" style="display: none;"></div>
+<script src="/js/settings.js"></script>
+
+</div>
+</body>
+</html>

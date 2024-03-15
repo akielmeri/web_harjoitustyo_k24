@@ -1,23 +1,24 @@
 :root {
-    --primary-color: #007bff; /* Pääväri painikkeille ja linkkeihin */
-    --hover-color: #0056b3; /* Hover-väri painikkeille */
-    --secondary-color: #6c757d; /* Toissijainen väri vähemmän tärkeille elementeille */
-    --background-color: #ffffff; /* Taustaväri */
-    --text-color: #212529; /* Tekstin väri */
-    --table-header-color: #f8f9fa; /* Taulukon otsikon taustaväri */
-    --table-row-hover-color: #f2f2f2; /* Taulukon rivin hover-väri */
-    --menu-bar-color: #343a40; /* Menubar väri */
-  }
+  --primary-color: #007bff; /* Pääväri painikkeille ja linkkeihin */
+  --hover-color: #0056b3; /* Hover-väri painikkeille */
+  --secondary-color: #6c757d; /* Toissijainen väri vähemmän tärkeille elementeille */
+  --background-color: #ffffff; /* Taustaväri */
+  --text-color: #212529; /* Tekstin väri */
+  --table-header-color: #f8f9fa; /* Taulukon otsikon taustaväri */
+  --table-row-hover-color: #f2f2f2; /* Taulukon rivin hover-väri */
+  --menu-bar-color: #343a40; /* Menubar väri */
+}
 
 body,
 #menuBar a {
   margin: 0;
   padding: 0;
-  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
 }
 
 #menuBar {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-around;
   background-color: var(--menu-bar-color);
   padding: 10px 0;
@@ -25,8 +26,19 @@ body,
 
 #notificationArea {
   padding: 10px;
-  margin: 10px 0;
-  background-color: #f44336; /* Punainen */
+  width: 90%;
+  margin: 20px auto;
+  background-color: #f44336; 
+  color: white;
+  text-align: center;
+  display: none; /* Piilotetaan oletuksena */
+}
+#confirmMessageArea {
+  padding: 10px;
+  margin: 20px auto;
+  width: 90%;
+  border-radius: 20px;
+  background-color: var(--menu-bar-color); 
   color: white;
   text-align: center;
   display: none; /* Piilotetaan oletuksena */
@@ -45,34 +57,32 @@ body,
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start; /* Vaihda tämä tarvittaessa */
-  min-height: 100vh; /* Vie vähintään koko näytön korkeuden */
-  padding: 20px; /* Välimatka sivun reunoista, säädä tarvittaessa */
-  background-color: var(--background-color); 
+
+  margin: 0 auto;
+  max-width: 1200px; 
+  min-height: 100vh;
+  padding: 20px;
+  background-color: var(--background-color);
 }
 
 #priceTable {
   margin-top: 20px;
   margin-bottom: 20px;
-
   font-size: 20px;
-  text-align: center; /* Keskittää sisällön */
+  text-align: center; 
+  width: 100%; 
+  max-width: 600px;
 }
 
-         
-
-
-
 #priceTable table {
-  /* Taulukon tyylit tässä */
-  width: 20em; /* Säädä taulukon leveyttä tarpeen mukaan */
-  margin: 0 auto; /* Keskittää taulukon horisontaalisesti */
+  
+  margin: 0 auto; 
   border-collapse: collapse;
 }
 
 #priceTable table th,
 #priceTable table td {
-  /* Solujen tyylit tässä */
+ 
   border: 1px solid black;
   padding: 8px;
   text-align: center;
@@ -85,39 +95,39 @@ body,
 }
 
 .price-low {
-  color: #2D844A;
+  color: #2d844a;
 }
 
 .price-medium {
-  /* color: #F8B324; */
-  color: #DD7A00;
+  color: #dd7a00;
 }
 
 .price-high {
-  color: #BA0517;
+  color: #ba0517;
 }
 
-#dateSelection button {
+button {
   margin-top: 5px;
   padding: 10px 20px;
+  border-radius: 20px;
   background-color: var(--primary-color);
   border: none;
   color: white;
   cursor: pointer;
-  transition: background-color 0.3s; /* Lisää siirtymä taustavärin muutokselle */
+  transition: background-color 0.3s; 
 }
 
-#dateSelection button:hover {
-  background-color:  var(--hover-color);
+button:hover {
+  background-color: var(--hover-color);
 }
 
-#dateSelection button.selected {
+button.selected {
   background-color: var(--hover-color);
 }
 
 #infoGrid {
   display: flex;
-    flex-wrap: wrap;
+  flex-wrap: wrap;
   gap: 10px;
   padding: 10px;
 }
@@ -128,7 +138,6 @@ body,
   background-color: #f0f4fa;
 }
 
-
 #priceChart {
   margin-top: 20px;
   width: 100%;
@@ -136,11 +145,19 @@ body,
 #priceCanvas {
   background-color: #f0f4fa;
   margin-top: 20px;
-  width: 100%;
+  width: 90%;
   border: 1px solid #ddd;
 }
-@media (max-width: 600px) {
-  #infoGrid {
-    grid-template-columns: 1fr;
+
+@media screen and (min-width: 769px) {
+
+  #priceChart, #priceCanvas {
+      max-width: 900px;
+
+  }
+  #priceTable table {
+    width: 100%;
+    
   }
 }
+

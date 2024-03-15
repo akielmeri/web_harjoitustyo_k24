@@ -3,8 +3,10 @@ import { key } from "./api-key.js";
 
 let priceData = [];
 let myChart = null;
-const expensivePrice = 15;
-const moderatePrice = 5;
+const highPrice = localStorage.getItem('highPrice');
+const moderatePrice = localStorage.getItem('moderatePrice');
+const includeTax = localStorage.getItem('includeTax') === 'true';
+console.log(highPrice, moderatePrice, includeTax);
 let selectedDay = "today";
 
 // Utility Functions
@@ -89,7 +91,7 @@ const processData = (xmlData) => {
       let position = points[i].getElementsByTagName("position")[0].textContent;
       let priceAmount =
         points[i].getElementsByTagName("price.amount")[0].textContent;
-      let formattedPrice = ((parseFloat(priceAmount) / 10) * 1.24).toFixed(2);
+      let formattedPrice = ((parseFloat(priceAmount) / 10)).toFixed(2);
       let pointDateTime = new Date(startDateTime.getTime());
       pointDateTime.setHours(pointDateTime.getHours() + parseInt(position) - 1);
       let dateTimeString = extractDateTimeStrings(pointDateTime);
@@ -123,20 +125,23 @@ const formatAndDisplayData = (priceData) => {
   priceData.forEach((item) => {
     let row = table.insertRow();
     let hour = item.hour;
-    console.log(hour);
     let endhour = parseInt(hour) + 1;
-    console.log(endhour);
     let hourCell = row.insertCell();
     hourCell.textContent = "klo " + hour + " - " + ("0" + endhour).slice(-2);
     let priceCell = row.insertCell();
-    let priceString = item.price.toFixed(2).replace(".", ",");
-    priceCell.textContent = priceString;
+    let priceWithoutTax = item.price.toFixed(2).replace(".", ",");
+    let priceWithTax = (item.price * 1.24).toFixed(2).replace(".", ",");
+    if (includeTax) {
+      priceCell.textContent = priceWithTax;
+    } else {
+      priceCell.textContent = priceWithoutTax;
+    }
     let priceValue = parseFloat(item.price);
-    if (priceValue <= moderatePrice) {
+    if (priceValue <= localStorage.getItem('moderatePrice')) {
       priceCell.classList.add("price-low");
-    } else if (priceValue > moderatePrice && priceValue <= expensivePrice) {
+    } else if (priceValue > localStorage.getItem('moderatePrice') && priceValue <= localStorage.getItem('highPrice')) {
       priceCell.classList.add("price-medium");
-    } else if (priceValue > expensivePrice) {
+    } else if (priceValue > localStorage.getItem('highPrice')) {
       priceCell.classList.add("price-high");
     }
   });
@@ -250,10 +255,10 @@ document.addEventListener("DOMContentLoaded", (event) => {
   fetchData();
 });
 
+console.log(localStorage.getItem('highPrice'));
+
 // Event Listeners
-document
-  .getElementById("dateSelection")
-  .addEventListener("click", function (e) {
+document.getElementById("dateSelection").addEventListener("click", function (e) {
     let currentSelectedButton = document.querySelector(
       "#dateSelection .selected"
     );
