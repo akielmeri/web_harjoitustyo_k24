@@ -18,7 +18,7 @@ export const fetchData = async () => {
     securityToken: key,
   }).toString()}`; // Lisätty toString() selkeyden vuoksi, vaikkakin URLSearchParamsin string-muunnos on automaattinen.
   const completeUrl = proxyUrl + apiUrl;
-  console.log(apiUrl);
+//   console.log(apiUrl);
 
   try {
     const response = await fetch(completeUrl, { method: "GET", cache: "no-cache" });
@@ -26,7 +26,7 @@ export const fetchData = async () => {
       throw new Error(`API request failed with status ${response.status}: ${response.statusText}`);
     }
     let xmlData = await response.text();
-    console.log(xmlData);
+    // console.log(xmlData);
     const lista = parseAndStorePriceData(xmlData);
     return lista;
   } catch (error) {
@@ -37,7 +37,7 @@ export const fetchData = async () => {
 const parseAndStorePriceData = (xmlData) => {
   const xmlDoc = new DOMParser().parseFromString(xmlData, "text/xml");
   const priceData = [];
-  console.log(xmlDoc);
+//   console.log(xmlDoc);
 
   // Etsitään kaikki period-elementit (1 per vuorokausi)
   const dayElements = xmlDoc.getElementsByTagName("Period");
@@ -49,7 +49,7 @@ const parseAndStorePriceData = (xmlData) => {
     let start = timeInterval.getElementsByTagName("start")[0].textContent;
     let startDateTime = new Date(start); // Vuorokauden ensimmäisen hintapisteen aika
     let hourOffSet = startDateTime.getHours(); // Tällä voimme määrittää ajat lopuille hintapisteille kasvattamalla sitä loopissa
-    console.log("startDateTime: ", startDateTime);
+    // console.log("startDateTime: ", startDateTime);
 
     // Etsitään kaikki hintapisteet (point-elementit) tästä ajanjaksosta
     // point-elementit sisältävät sähkön hinnan ja position-elementin, josta voidaan laskea tunti
@@ -79,7 +79,7 @@ const parseAndStorePriceData = (xmlData) => {
         price: parseFloat(priceInCents),
       });
       hourOffSet++; // Kasvatetaan tuntia seuraavaa hintapistettä varten
-      console.log(priceData[priceData.length - 1]);
+    //   console.log(priceData[priceData.length - 1]);
     }
   }
 

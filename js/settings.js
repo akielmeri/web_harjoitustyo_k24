@@ -1,27 +1,5 @@
-// Määritellään oletusasetukset
-const defaultSettings = {
-  expensivePriceThreshold: 20,
-  moderatePriceThreshold: 10,
-  includeTax: true,
-};
 
-// Funktio oletusasetusten tarkistamiseksi ja tallentamiseksi LocalStorageen
-function initializeSettings() {
-  if (localStorage.getItem("expensivePriceThreshold") === null) {
-    localStorage.setItem("expensivePriceThreshold", defaultSettings.expensivePriceThreshold);
-  }
-  if (localStorage.getItem("moderatePriceThreshold") === null) {
-    localStorage.setItem("moderatePriceThreshold", defaultSettings.moderatePriceThreshold);
-  }
-  if (localStorage.getItem("includeTax") === null) {
-    localStorage.setItem("includeTax", defaultSettings.includeTax);
-  }
-}
-
-// Funktio asetusten lataamiseksi
-function loadSettings() {
-  initializeSettings(); // Varmistetaan, että oletusasetukset on asetettu
-
+export function loadSettings() {
   return {
     expensivePriceThreshold: parseInt(localStorage.getItem('expensivePriceThreshold'), 10),
     moderatePriceThreshold: parseInt(localStorage.getItem("moderatePriceThreshold"), 10),
@@ -59,8 +37,14 @@ function saveSettings(expensivePriceThreshold, moderatePriceThreshold, includeTa
   }
 
 
+ 
+
+
+
+
 document.addEventListener("DOMContentLoaded", () => {
   const settings = loadSettings();
+
 
   document.getElementById("expensivePriceThreshold").value = settings.expensivePriceThreshold;
   document.getElementById("moderatePriceThreshold").value = settings.moderatePriceThreshold;
@@ -91,6 +75,7 @@ document.getElementById('settingsGrid').addEventListener('input', function(event
     }
 }
 );
+
     
 
 

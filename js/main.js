@@ -1,25 +1,28 @@
 import { fetchData } from "./dataFetcher.js";
 
-// Initial Setup and Constants
 
+// Tila ja globaalit muuttujat
 
-let priceData = [];
-let priceChart = null;
-const highPrice = localStorage.getItem("highPrice");
-const moderatePrice = localStorage.getItem("moderatePrice");
-const includeTax = localStorage.getItem("includeTax") === "true";
-let currentSelectedDay = "today";
+const appState = {
+  priceData: [],
+  priceChart: null,
+  currentSelectedDay: "today",
 
-const initializeApp = async () => {
-  try {
-    priceData = await fetchData();
-    handleDateSelection(currentSelectedDay)
-    
-  } catch (error) {
-    console.error("Virhe datan käsittelyssä:", error);
-  }
+};
+const priceStats = {
+  averagePrice: "",
+  lowestPrice: "",
+  highestPrice: "",
+  currentPrice: "",
 };
 
+const settings = {
+  expensive: parseInt(localStorage.getItem("expensivePriceThreshold")) || 10,
+  moderate: parseInt(localStorage.getItem("moderatePriceThreshold")) || 5,
+  includeTax: localStorage.getItem("includeTax") !== null ? localStorage.getItem("includeTax") === "true" : true,
+};
+
+// Apufunktiot
 
 export const formatDateTimeComponents = (date) => {
   // Apufunktio, joka lisää nollan yksittäisen numeron eteen
@@ -27,36 +30,36 @@ export const formatDateTimeComponents = (date) => {
 
   const hourString = pad(date.getHours());
   const dateString = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
-
   return { dateString, hourString };
 };
 
+const calculateStats = (pricePoints) => {
+  if (pricePoints.length != 24) return;
 
-const calculateStats = (priceData) => {
-  if (priceData.length === 0) return { averagePrice: 0, lowestPrice: 0, highestPrice: 0 };
-
-  const sum = priceData.reduce((acc, item) => acc + item.price, 0);
-  const lowestPrice = Math.min(...priceData.map(item => item.price));
-  const highestPrice = Math.max(...priceData.map(item => item.price));
-  const averagePrice = Number((sum / priceData.length).toFixed(2));
-
-  return { averagePrice, lowestPrice, highestPrice };
+  const sum = pricePoints.reduce((acc, item) => acc + item.price, 0);
+  priceStats.lowestPrice = Math.min(...pricePoints.map((item) => item.price));
+  priceStats.highestPrice = Math.max(...pricePoints.map((item) => item.price));
+  priceStats.averagePrice = Number((sum / pricePoints.length).toFixed(2));
 };
 
+// DOM-toiminnot
+const displayPriceStats = () => {
+  // Apufunktio, joka lisää asettaa kaksi desimaalia ja korvaa pisteen pilkulla
+  const formatPrice = (price) => price.toFixed(2).replace(".", ",");
 
+  document.getElementById("averagePrice").textContent = formatPrice(priceStats.averagePrice);
+  document.getElementById("lowestPrice").textContent = formatPrice(priceStats.lowestPrice);
+  document.getElementById("highestPrice").textContent = formatPrice(priceStats.highestPrice);
+  document.getElementById("currentPrice").textContent = formatPrice(priceStats.currentPrice);
+};
 
-
-// DOM Manipulation and Event Handling
-const displayPriceData = (priceData) => {
-  let { averagePrice, lowestPrice, highestPrice } = calculateStats(priceData);
-  document.getElementById("averagePrice").textContent = averagePrice.toFixed(2).replace(".", ",");
-  document.getElementById("lowestPrice").textContent = lowestPrice.toFixed(2).replace(".", ",");
-  document.getElementById("highestPrice").textContent = highestPrice.toFixed(2).replace(".", ",");
-  let tableDate = new Date(priceData[0].date).toLocaleDateString("fi-FI");
+const createAndDisplayTable = (pricePoints) => {
+  let tableDate = new Date(pricePoints[0].date).toLocaleDateString("fi-FI");
   let table = document.createElement("table");
   let headerRow = table.insertRow();
   headerRow.innerHTML = `<th>${tableDate}</th><th>Hinta (c/kWh)</th>`;
-  priceData.forEach((item) => {
+  console.log(settings.expensive);
+  pricePoints.forEach((item) => {
     let row = table.insertRow();
     let hour = item.hour;
     let endhour = parseInt(hour) + 1;
@@ -65,18 +68,21 @@ const displayPriceData = (priceData) => {
     let priceCell = row.insertCell();
     let priceWithoutTax = item.price.toFixed(2).replace(".", ",");
     let priceWithTax = (item.price * 1.24).toFixed(2).replace(".", ",");
-    if (includeTax) {
+    let priceValue;
+    if (settings.includeTax) {
       priceCell.textContent = priceWithTax;
+      priceValue = parseFloat(priceWithTax);
     } else {
       priceCell.textContent = priceWithoutTax;
+      priceValue = parseFloat(priceWithoutTax);
     }
-    let priceValue = parseFloat(item.price);
-    if (priceValue <= localStorage.getItem("moderatePriceThreshold")) {
-      priceCell.classList.add("price-low");
-    } else if (priceValue > localStorage.getItem("moderatePriceThreshold") && priceValue <= localStorage.getItem("expensivePriceThreshold")) {
-      priceCell.classList.add("price-medium");
-    } else if (priceValue > localStorage.getItem("expensivePriceThreshold")) {
+
+    if (priceValue >= settings.expensive) {
       priceCell.classList.add("price-high");
+    } else if (priceValue >= settings.moderate) {
+      priceCell.classList.add("price-medium");
+    } else if (priceValue < settings.moderate) {
+      priceCell.classList.add("price-low");
     }
   });
   let container = document.getElementById("priceTable");
@@ -91,70 +97,70 @@ const showNotification = (message) => {
   canvasContainer.style.display = "none";
   let container = document.getElementById("priceTable");
   container.innerHTML = "";
-  if (priceChart) {
-    priceChart.destroy();
+  if (appState.priceChart) {
+    appState.priceChart.destroy();
   }
   var notificationArea = document.getElementById("notificationArea");
   notificationArea.textContent = message;
   notificationArea.style.display = "block";
 };
 
-// Main Functionality
-const handleDateSelection = (currentSelectedDay) => {
+// Päätoiminnot
+const handleDateSelection = (selectedDay) => {
   const targetDate = new Date();
 
-  if (currentSelectedDay === "yesterday") {
+  if (selectedDay === "yesterday") {
     targetDate.setDate(targetDate.getDate() - 1);
-  } else if (currentSelectedDay === "tomorrow") {
+  } else if (selectedDay === "tomorrow") {
     targetDate.setDate(targetDate.getDate() + 1);
   }
 
-  const filteredData = filterPricesByDate(priceData, targetDate);
+  const filteredData = filterPricesByDate(appState.priceData, targetDate);
   if (filteredData.length !== 24) {
     showNotification("Huomisen hintoja ei vielä saatavilla!");
     return;
   }
-  displayPriceData(filteredData);
+  getCurrentPrice(appState.priceData);
+  calculateStats(filteredData);
+  displayPriceStats(filteredData);
+  createAndDisplayTable(filteredData);
   plotGraph(filteredData);
 };
 
-const getCurrentPrice = (priceData) => {
+const getCurrentPrice = (pricePoints) => {
   let currentHour = formatDateTimeComponents(new Date()).hourString;
   let currentDay = formatDateTimeComponents(new Date()).dateString;
   console.log(currentHour);
   console.log(currentDay);
-  let currentPrice = priceData.find((item) => item.hour === currentHour && item.date === currentDay);
+  let currentPrice = pricePoints.find((item) => item.hour === currentHour && item.date === currentDay);
   if (currentPrice) {
     console.log(currentPrice);
-    let priceWithoutTax = currentPrice.price.toFixed(2).replace(".", ",");
-    let priceWithTax = (currentPrice.price * 1.24).toFixed(2).replace(".", ",");
-    if (includeTax) {
-      document.getElementById("currentPrice").textContent = priceWithTax;
-      return priceWithTax;
+    let priceWithoutTax = currentPrice.price;
+    let priceWithTax = currentPrice.price * 1.24;
+    if (settings.includeTax) {
+      priceStats.currentPrice = priceWithTax;
     } else {
-      document.getElementById("currentPrice").textContent = priceWithoutTax;
-      return priceWithoutTax;
+      priceStats.currentPrice = priceWithoutTax;
     }
   } else {
     document.getElementById("currentPrice").textContent = "Ei saatavilla";
-    return null;
   }
 };
 
-const filterPricesByDate = (priceData, date) => {
+const filterPricesByDate = (pricePoints, date) => {
   let dateString = formatDateTimeComponents(date).dateString;
-  let filteredData = priceData.filter((item) => {
+  let filteredData = pricePoints.filter((item) => {
     let itemDate = item.date;
     return itemDate === dateString;
   });
   return filteredData;
 };
 
-const plotGraph = (priceData) => {
+const plotGraph = (pricePoints) => {
   var canvasContainer = document.getElementById("priceCanvas").parentElement;
   canvasContainer.style.display = "block"; // Palautetaan näkyviin
-  const labels = priceData.map((item) => item.hour);
-  const dataPoints = priceData.map((item) => item.price);
+  const labels = pricePoints.map((item) => item.hour);
+  const dataPoints = pricePoints.map((item) => item.price);
   const data = {
     labels: labels,
     datasets: [
@@ -184,31 +190,43 @@ const plotGraph = (priceData) => {
       },
     },
   };
-  if (priceChart) {
-    priceChart.destroy();
+  if (appState.priceChart) {
+    appState.priceChart.destroy();
   }
-  priceChart = new Chart(document.getElementById("priceCanvas"), config);
+  appState.priceChart = new Chart(document.getElementById("priceCanvas"), config);
 };
 
-// // Initial Setup
+// Alustus
+const initializeApp = async () => {
+  try {
+    appState.priceData = await fetchData();
+    handleDateSelection(appState.currentSelectedDay);
+  } catch (error) {
+    console.error("Virhe datan käsittelyssä:", error);
+  }
+};
+
+
+
+// Sovelluksen käynnistys
 document.addEventListener("DOMContentLoaded", async (event) => {
   await initializeApp();
-  getCurrentPrice(priceData);
+  console.log("Setting", settings);
 });
 
-console.log(priceData);
+console.log(appState.priceData);
 
-// Event Listeners
+// Päivän valintanappien kuuntelijat
 document.getElementById("dateSelection").addEventListener("click", function (e) {
   let currentSelectedButton = document.querySelector("#dateSelection .selected");
   if (e.target.tagName === "BUTTON") {
-    currentSelectedDay = e.target.id;
+    appState.currentSelectedDay = e.target.id;
 
     if (currentSelectedButton) {
       currentSelectedButton.classList.remove("selected");
     }
     e.target.classList.add("selected");
-console.log(currentSelectedDay);
-    handleDateSelection(currentSelectedDay);
+    console.log(appState.currentSelectedDay);
+    handleDateSelection(appState.currentSelectedDay);
   }
 });

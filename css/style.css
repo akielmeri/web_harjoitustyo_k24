@@ -9,6 +9,11 @@
   --menu-bar-color: #343a40; /* Menubar väri */
 }
 
+html {
+  font-size: calc(80% + 0.8vmin);
+}
+
+
 body,
 #menuBar a {
   margin: 0;
@@ -68,7 +73,7 @@ body,
 #priceTable {
   margin-top: 20px;
   margin-bottom: 20px;
-  font-size: 20px;
+  /* font-size: 20px; */
   text-align: center; 
   width: 100%; 
   max-width: 600px;
