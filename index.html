@@ -41,7 +41,22 @@
         <button id="today" class="selected">Tänään</button>
         <button id="tomorrow">Huomenna</button>
       </div>
-      <div id="priceTable"></div>
+      <div id="priceTable">
+          <table>
+            <thead>
+              <tr>
+                <th colspan="2">Päivämäärä</th>
+              </tr>
+              <tr>
+                <th>Päivämäärä</th>
+                <th>Hinta (c/kWh)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Rivit lisätään tänne JavaScriptillä -->
+            </tbody>
+          </table>
+      </div>
       <div id="notificationArea" style="display: none"></div>
       <div id="priceChart">
         <canvas id="priceCanvas"></canvas>

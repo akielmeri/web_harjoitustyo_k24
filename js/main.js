@@ -100,36 +100,29 @@ const displayPriceStats = () => {
   currentPriceValue.classList.add(determinePriceLevel(priceStats.currentPrice));
 };
 
-const createAndDisplayTable = (pricePoints) => {
-  let tableDate = new Date(pricePoints[0].date).toLocaleDateString("fi-FI");
-  let table = document.createElement("table");
-  let headerRow = table.insertRow();
-  headerRow.innerHTML = `<th>${tableDate}</th><th>Hinta (c/kWh)</th>`;
-  console.log(settings.expensive);
+const fillAndDisplayTable = (pricePoints) => {
+  let tableBody = document.querySelector("#priceTable tbody");
+  let options = { weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric' };
+  let tableDate = new Date(pricePoints[0].date).toLocaleDateString("fi-FI", options);
+  document.querySelector("#priceTable th:first-child").textContent = tableDate;
+  document.querySelector("#priceTable tr:nth-child(2) th").textContent = "Klo";
+  tableBody.innerHTML = ""; // Tyhjennetään mahdollinen olemassa oleva sisältö
   pricePoints.forEach((item) => {
-    let row = table.insertRow();
+    let row = tableBody.insertRow();
     let hour = item.hour;
     let endhour = parseInt(hour) + 1;
     let hourCell = row.insertCell();
     hourCell.textContent = "klo " + hour + " - " + ("0" + endhour).slice(-2);
     let priceCell = row.insertCell();
-    let priceWithoutTax = item.price.toFixed(2).replace(".", ",");
-    let priceWithTax = (item.price * 1.24).toFixed(2).replace(".", ",");
-    let priceValue;
-    if (settings.includeTax) {
-      priceCell.textContent = priceWithTax;
-      priceValue = parseFloat(priceWithTax);
-    } else {
-      priceCell.textContent = priceWithoutTax;
-      priceValue = parseFloat(priceWithoutTax);
-    }
-    priceCell.classList.add(determinePriceLevel(priceValue));
+    let price = settings.includeTax ? item.price * 1.24 : item.price;
+    priceCell.textContent = price.toFixed(2).replace(".", ",");
+    priceCell.classList.add(determinePriceLevel(price));
   });
   let container = document.getElementById("priceTable");
   var notificationArea = document.getElementById("notificationArea");
   notificationArea.style.display = "none"; // Tehdään näkyväksi
-  container.innerHTML = "";
-  container.appendChild(table);
+  // container.innerHTML = "";
+  // container.appendChild(table);
   container.style.display = "block"; // Tehdään näkyväksi
   applyPulseEffect(container);
 };
@@ -175,7 +168,7 @@ const handleDateSelection = (selectedDay) => {
   getCurrentPrice(appState.priceData);
   calculateStats(filteredData);
   displayPriceStats(filteredData);
-  createAndDisplayTable(filteredData);
+  fillAndDisplayTable(filteredData);
   plotGraph(filteredData);
 };
 
