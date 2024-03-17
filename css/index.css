@@ -1,3 +1,7 @@
+.hidden {
+  display: none;
+}
+
 #infoGrid {
   display: flex;
   flex-wrap: wrap;
@@ -45,7 +49,7 @@
 #priceTable {
   margin-top: 0.5rem;
   text-align: center;
-  width: 100%;
+  width: 70%;
   border-radius: 10px;
   overflow: hidden;
   border: var(--element-border);
@@ -61,24 +65,17 @@
 }
 
 #priceTable table tr {
-  border-bottom: var(--element-border);
-  padding: 8px;
-  
-
+  padding: 0.5rem;
 }
 
-#priceTable table th {
+#priceTable table th{
   border-bottom: var(--element-border);
-  padding: 8px;
-  text-align: center;
-  /* background-color: var(--table-header-color); */
+  padding: 0.5rem;
 }
 
 #priceTable table td {
   border-bottom: var(--element-border);
-  padding: 8px;
-  text-align: center;
-  /* background-color: var(--table-header-color); */
+  padding: 5px;
 }
 
 #priceTable table th:not(:first-child), #priceTable table td:not(:first-child) {

@@ -13,26 +13,26 @@
       <a href="settings.html">Settings</a>
       <!-- <a href="about.html">About</a> -->
     </nav>
-    <div class="content-container">
+    <div class="content-container hidden">
       <div id="introText">
         <h3>Pörssisähkön hinnat tunneittain</h3>
       </div>
 
       <div id="infoGrid">
         <div class="infoItem">
-            <label for="currentPrice">Nykyinen hinta</label>
+            <label>Nykyinen hinta</label>
             <div id="currentPrice" class="infoValue"></div>
         </div>
         <div class="infoItem">
-            <label for="averagePrice">Keskihinta</label>
+            <label>Keskihinta</label>
             <div id="averagePrice" class="infoValue"></div>
         </div>
         <div class="infoItem">
-            <label for="lowestPrice">Alin</label>
+            <label>Halvinta klo <span id="lowestPriceLabel"></span></label>
             <div id="lowestPrice" class="infoValue"></div>
         </div>
         <div class="infoItem">
-            <label for="highestPrice">Korkein</label>
+          <label>Kalleinta klo <span id="highestPriceLabel"></span></label>
             <div id="highestPrice" class="infoValue"></div>
         </div>
     </div>
@@ -53,7 +53,7 @@
               </tr>
             </thead>
             <tbody>
-              <!-- Rivit lisätään tänne JavaScriptillä -->
+<!--  javascriptillä tähän-->
             </tbody>
           </table>
       </div>

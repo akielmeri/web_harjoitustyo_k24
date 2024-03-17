@@ -2,12 +2,6 @@ import { key } from "./api-key.js";
 import { formatDateTimeComponents, showNotification } from "./main.js";
 
 export const fetchData = async () => {
-  if (key === "YOUR_API_KEY") {
-    // console.error("Please add your API key."); // Muutettu alertista console.erroriin paremman kehityskokemuksen saavuttamiseksi
-    showNotification("Please add your API key.");
-    return;
-  }
-
   const { startPeriod, endPeriod } = createApiTimeInterval();
   const proxyUrl = "https://corsproxy.io/?";
   const apiUrl = `https://web-api.tp.entsoe.eu/api?${new URLSearchParams({
@@ -19,7 +13,7 @@ export const fetchData = async () => {
     securityToken: key,
   }).toString()}`; // Lisätty toString() selkeyden vuoksi, vaikkakin URLSearchParamsin string-muunnos on automaattinen.
   const completeUrl = proxyUrl + apiUrl;
-//   console.log(apiUrl);
+
 
   try {
     const response = await fetch(completeUrl, { method: "GET", cache: "no-cache" });
@@ -27,11 +21,11 @@ export const fetchData = async () => {
       throw new Error(`API request failed with status ${response.status}: ${response.statusText}`);
     }
     let xmlData = await response.text();
-    // console.log(xmlData);
     const lista = parseAndStorePriceData(xmlData);
     return lista;
   } catch (error) {
-    console.error("API call error:", error.message); // Täsmennetään, että tulostetaan error-olion message-ominaisuus.
+    console.error("API call error:", error.message);
+    showNotification(error.message);
   }
 };
 
