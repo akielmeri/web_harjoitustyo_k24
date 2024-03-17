@@ -1,5 +1,8 @@
+// dataFetcher.js
+
 import { key } from "./api-key.js";
-import { formatDateTimeComponents, showNotification } from "./main.js";
+import { showNotification } from "./uiController.js";
+import { formatDateTimeComponents } from "./utilities.js";
 
 export const fetchData = async () => {
   const { startPeriod, endPeriod } = createApiTimeInterval();
@@ -11,7 +14,7 @@ export const fetchData = async () => {
     periodStart: startPeriod,
     periodEnd: endPeriod,
     securityToken: key,
-  }).toString()}`; // Lisätty toString() selkeyden vuoksi, vaikkakin URLSearchParamsin string-muunnos on automaattinen.
+  }).toString()}`; 
   const completeUrl = proxyUrl + apiUrl;
 
 

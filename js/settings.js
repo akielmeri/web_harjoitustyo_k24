@@ -1,3 +1,6 @@
+
+// settings.js
+
 // Funktio asetusten lataamiseen localStoragesta
 export const loadSettings = () => {
   return {
