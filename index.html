@@ -1,43 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Electricity Prices</title>
-    <link rel="stylesheet" href="/css/style.css">
-</head>
-<body>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/index.css">
+  </head>
+  <body>
     <nav id="menuBar">
-        <a href="index.html">Home</a>
-        <a href="settings.html">Settings</a>
-        <a href="about.html">About</a>
+      <a href="index.html">Home</a>
+      <a href="settings.html">Settings</a>
+      <!-- <a href="about.html">About</a> -->
     </nav>
     <div class="content-container">
-    <div id="introText">
-        <h2>Pörssisähkön hinnat tunneittain</h2>
-    </div>
+      <div id="introText">
+        <h3>Pörssisähkön hinnat tunneittain</h3>
+      </div>
 
-    
-    <div id="infoGrid">
-        <div>Nykyinen: <span id="currentPrice"></span></div>
-        <div>Keskihinta: <span id="averagePrice"></span></div>
-        <div>Alin: <span id="lowestPrice"></span></div>
-        <div>Korkein: <span id="highestPrice"></span></div>
+      <div id="infoGrid">
+        <div class="infoItem">
+            <label for="currentPrice">Nykyinen hinta</label>
+            <div id="currentPrice" class="infoValue"></div>
+        </div>
+        <div class="infoItem">
+            <label for="averagePrice">Keskihinta</label>
+            <div id="averagePrice" class="infoValue"></div>
+        </div>
+        <div class="infoItem">
+            <label for="lowestPrice">Alin</label>
+            <div id="lowestPrice" class="infoValue"></div>
+        </div>
+        <div class="infoItem">
+            <label for="highestPrice">Korkein</label>
+            <div id="highestPrice" class="infoValue"></div>
+        </div>
     </div>
-    <div id="dateSelection">
-        <button id="yesterday">Yesterday</button>
-        <button id="today" class="selected">Today</button>
-        <button id="tomorrow">Tomorrow</button>
-
-    </div>
-    <div id="priceTable"></div>
-    <div id="notificationArea" style="display: none;"></div>
-    <div id="priceChart">
+      <div id="dateSelection">
+        <button id="yesterday">Eilen</button>
+        <button id="today" class="selected">Tänään</button>
+        <button id="tomorrow">Huomenna</button>
+      </div>
+      <div id="priceTable"></div>
+      <div id="notificationArea" style="display: none"></div>
+      <div id="priceChart">
         <canvas id="priceCanvas"></canvas>
-    <script type="module" src="/js/dataFetcher.js"></script>
-    <script type="module" src="/js/main.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</div>
-</body>
+        <script type="module" src="/js/dataFetcher.js"></script>
+        <script type="module" src="/js/main.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+      </div>
+    </div>
+  </body>
 </html>

@@ -1,24 +1,43 @@
 :root {
-  --primary-color: #007bff; /* Pääväri painikkeille ja linkkeihin */
-  --hover-color: #0056b3; /* Hover-väri painikkeille */
-  --secondary-color: #6c757d; /* Toissijainen väri vähemmän tärkeille elementeille */
-  --background-color: #ffffff; /* Taustaväri */
-  --text-color: #212529; /* Tekstin väri */
-  --table-header-color: #f8f9fa; /* Taulukon otsikon taustaväri */
-  --table-row-hover-color: #f2f2f2; /* Taulukon rivin hover-väri */
-  --menu-bar-color: #343a40; /* Menubar väri */
+  --primary-color: #007bff;
+  --hover-color: #0056b3;
+  --secondary-color: #6c757d;
+  --background-color: #cbdcf6;
+  --text-color: #212529;
+  --table-header-color: #f0f4fa;
+  --table-cell-color: #f8f9fa;
+  --menu-bar-color: #343a40;
+  --button-color: #007bff;
+  --button-hover-color: #0056b3;
+  --alert-color: #f44336;
+  --element-border: 2px solid var(--secondary-color);
 }
+
 
 html {
-  font-size: calc(80% + 0.8vmin);
+  font-size: calc(80% + 0.8vmin);  
 }
 
+.content-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 auto;
+  max-width: 50rem;
+  padding: 3rem;
 
-body,
-#menuBar a {
+}
+
+h3 {
+  margin-bottom: 1rem;
+  padding-top: 2rem;
+}
+
+body {
   margin: 0;
   padding: 0;
   font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  background-color: var(--background-color);
 }
 
 #menuBar {
@@ -26,27 +45,10 @@ body,
   flex-wrap: wrap;
   justify-content: space-around;
   background-color: var(--menu-bar-color);
-  padding: 10px 0;
-}
-
-#notificationArea {
-  padding: 10px;
-  width: 90%;
-  margin: 20px auto;
-  background-color: #f44336; 
-  color: white;
-  text-align: center;
-  display: none; /* Piilotetaan oletuksena */
-}
-#confirmMessageArea {
-  padding: 10px;
-  margin: 20px auto;
-  width: 90%;
-  border-radius: 20px;
-  background-color: var(--menu-bar-color); 
-  color: white;
-  text-align: center;
-  display: none; /* Piilotetaan oletuksena */
+  padding: 0.5rem;
+  position: fixed;
+  width: 100%;
+  z-index: 1000;
 }
 
 #menuBar a {
@@ -58,111 +60,20 @@ body,
   text-decoration: underline;
 }
 
-.content-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 
-  margin: 0 auto;
-  max-width: 1200px; 
-  min-height: 100vh;
-  padding: 20px;
-  background-color: var(--background-color);
-}
-
-#priceTable {
-  margin-top: 20px;
-  margin-bottom: 20px;
-  /* font-size: 20px; */
-  text-align: center; 
-  width: 100%; 
-  max-width: 600px;
-}
-
-#priceTable table {
-  
-  margin: 0 auto; 
-  border-collapse: collapse;
-}
-
-#priceTable table th,
-#priceTable table td {
- 
-  border: 1px solid black;
-  padding: 8px;
-  text-align: center;
-  background-color: #f0f4fa;
-}
-
-#priceTable table th {
-  /* Otsikkorivin solujen tyylit */
-  background-color: #f0f4fa;
-}
-
-.price-low {
-  color: #2d844a;
-}
-
-.price-medium {
-  color: #dd7a00;
-}
-
-.price-high {
-  color: #ba0517;
-}
 
 button {
-  margin-top: 5px;
-  padding: 10px 20px;
-  border-radius: 20px;
-  background-color: var(--primary-color);
+  /* margin-top: 5px; */
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  background-color: var(--button-color);
   border: none;
   color: white;
-  cursor: pointer;
   transition: background-color 0.3s; 
 }
 
-button:hover {
-  background-color: var(--hover-color);
-}
-
+button:hover,
 button.selected {
-  background-color: var(--hover-color);
-}
-
-#infoGrid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  padding: 10px;
-}
-
-#infoGrid div {
-  padding: 10px;
-  border: 1px solid #ddd;
-  background-color: #f0f4fa;
-}
-
-#priceChart {
-  margin-top: 20px;
-  width: 100%;
-}
-#priceCanvas {
-  background-color: #f0f4fa;
-  margin-top: 20px;
-  width: 90%;
-  border: 1px solid #ddd;
-}
-
-@media screen and (min-width: 769px) {
-
-  #priceChart, #priceCanvas {
-      max-width: 900px;
-
-  }
-  #priceTable table {
-    width: 100%;
-    
-  }
+  background-color: var(--button-hover-color);
 }
 

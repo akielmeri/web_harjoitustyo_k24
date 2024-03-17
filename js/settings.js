@@ -1,81 +1,77 @@
-
-export function loadSettings() {
+// Funktio asetusten lataamiseen localStoragesta
+export const loadSettings = () => {
   return {
     expensivePriceThreshold: parseInt(localStorage.getItem('expensivePriceThreshold'), 10),
-    moderatePriceThreshold: parseInt(localStorage.getItem("moderatePriceThreshold"), 10),
-    includeTax: localStorage.getItem("includeTax") === "true",
+    moderatePriceThreshold: parseInt(localStorage.getItem('moderatePriceThreshold'), 10),
+    includeTax: localStorage.getItem('includeTax') === 'true',
   };
-}
+};
 
-// Funktio asetusten tallentamiseksi
-function saveSettings(expensivePriceThreshold, moderatePriceThreshold, includeTax) {
-    if (parseInt(moderatePriceThreshold, 10) >= parseInt(expensivePriceThreshold, 10)) {
-      var notificationArea = document.getElementById("confirmMessageArea");
-      notificationArea.textContent = "Kohtuullisen hinnan raja on oltava pienempi kuin kalliin hinnan raja.";
-      notificationArea.style.backgroundColor = "red"; 
-      notificationArea.style.display = "block";
-    } else {
-      // Jos tarkistus menee läpi, tallenna arvot normaalisti
-      localStorage.setItem("expensivePriceThreshold", expensivePriceThreshold.toString());
-      localStorage.setItem("moderatePriceThreshold", moderatePriceThreshold.toString());
-      localStorage.setItem("includeTax", includeTax.toString());
-  
-      
-      var notificationArea = document.getElementById("confirmMessageArea");
-      notificationArea.textContent = "Asetukset tallennettu!";
-      notificationArea.style.backgroundColor = "green"; 
-        notificationArea.style.display = "block";
-       
-        document.getElementById("save").disabled = true;
-        document.getElementById("save").style.backgroundColor = "grey";
 
-       
-        document.getElementById("cancel").textContent = "Palaa takaisin";
 
-        
-    }
+// Funktio asetusten tallentamiseen validoinnin jälkeen
+const saveSettings = (expensivePriceThreshold, moderatePriceThreshold, includeTax) => {
+  // Validoidaan rajat
+  if (parseInt(moderatePriceThreshold, 10) >= parseInt(expensivePriceThreshold, 10)) {
+    displayNotification('Kohtuullisen hinnan raja on oltava pienempi kuin kalliin hinnan raja.', 'red');
+  } else {
+    // Tallennetaan asetukset localStorageen
+    localStorage.setItem('expensivePriceThreshold', expensivePriceThreshold.toString());
+    localStorage.setItem('moderatePriceThreshold', moderatePriceThreshold.toString());
+    localStorage.setItem('includeTax', includeTax.toString());
+
+    // Näytetään onnistumisilmoitus
+    displayNotification('Asetukset tallennettu!', 'green');
+
+    // Poistetaan tallenna-nappulan käyttö ja muutetaan sen tyyliä
+    const saveButton = document.getElementById('save');
+    saveButton.disabled = true;
+    saveButton.style.backgroundColor = 'grey';
+
+    // Päivitetään peruuta-napin teksti
+    document.getElementById('cancel').textContent = 'Palaa takaisin';
   }
+};
+// Funktio ilmoitusviestien näyttämiseen
+const displayNotification = (message, backgroundColor) => {
+  const notificationArea = document.getElementById('confirmMessageArea');
+  notificationArea.textContent = message;
+  notificationArea.style.backgroundColor = backgroundColor;
+  notificationArea.style.display = 'block';
+};
 
 
- 
-
-
-
-
-document.addEventListener("DOMContentLoaded", () => {
+// DOM-sisällön lataus -tapahtuman kuuntelija
+document.addEventListener('DOMContentLoaded', () => {
   const settings = loadSettings();
 
+  // Täytetään lomakkeen kentät ladatuilla asetuksilla
+  document.getElementById('expensivePriceThreshold').value = settings.expensivePriceThreshold;
+  document.getElementById('moderatePriceThreshold').value = settings.moderatePriceThreshold;
+  document.querySelector('#includeTax').checked = settings.includeTax;
 
-  document.getElementById("expensivePriceThreshold").value = settings.expensivePriceThreshold;
-  document.getElementById("moderatePriceThreshold").value = settings.moderatePriceThreshold;
-  document.querySelector("#includeTax").checked = settings.includeTax;
-
-  document.getElementById("save").addEventListener("click", () => {
-    const expensivePriceThreshold = document.getElementById("expensivePriceThreshold").value;
-    const moderatePriceThreshold = document.getElementById("moderatePriceThreshold").value;
-    const includeTax = document.querySelector("#includeTax").checked;
+  // Tallenna-napin tapahtuma
+  document.getElementById('save').addEventListener('click', () => {
+    const expensivePriceThreshold = document.getElementById('expensivePriceThreshold').value;
+    const moderatePriceThreshold = document.getElementById('moderatePriceThreshold').value;
+    const includeTax = document.querySelector('#includeTax').checked;
 
     saveSettings(expensivePriceThreshold, moderatePriceThreshold, includeTax);
-
   });
 
-  document.getElementById("cancel").addEventListener("click", () => {
+  // Peruuta-napin tapahtuma
+  document.getElementById('cancel').addEventListener('click', () => {
     window.history.back();
   });
 });
 
-
-document.getElementById('settingsGrid').addEventListener('input', function(event) {
-    // Tarkista, onko muutettu elementti jokin halutuista input-kentistä
-    if (event.target.id === 'expensivePriceThreshold' || event.target.id === 'moderatePriceThreshold' || event.target.id === 'includeTax') {
-        document.getElementById('save').disabled = false;
-        document.getElementById('save').style.backgroundColor = '#007bff';
-        document.getElementById('cancel').textContent = 'Peruuta';
-        document.getElementById('confirmMessageArea').style.display = 'none';
-    }
-}
-);
-
-    
-
-
+// Tapahtumakuuntelija asetuslomakkeen muutoksille
+document.getElementById('settingsGrid').addEventListener('input', (event) => {
+  if (['expensivePriceThreshold', 'moderatePriceThreshold', 'includeTax'].includes(event.target.id)) {
+    const saveButton = document.getElementById('save');
+    saveButton.disabled = false;
+    saveButton.style.backgroundColor = '#007bff';
+    document.getElementById('cancel').textContent = 'Peruuta';
+    document.getElementById('confirmMessageArea').style.display = 'none';
+  }
+});

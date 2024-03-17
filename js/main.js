@@ -1,19 +1,20 @@
 import { fetchData } from "./dataFetcher.js";
 
-
 // Tila ja globaalit muuttujat
 
 const appState = {
   priceData: [],
   priceChart: null,
   currentSelectedDay: "today",
-
 };
 const priceStats = {
-  averagePrice: "",
-  lowestPrice: "",
-  highestPrice: "",
   currentPrice: "",
+  averagePrice: "",
+  averagePriceHour: "",
+  lowestPrice: "",
+  lowestPriceHour: "",
+  highestPrice: "",
+  highestPriceHour: "",
 };
 
 const settings = {
@@ -35,22 +36,68 @@ export const formatDateTimeComponents = (date) => {
 
 const calculateStats = (pricePoints) => {
   if (pricePoints.length != 24) return;
+  const taxMultiplier = settings.includeTax ? 1.24 : 1;
 
-  const sum = pricePoints.reduce((acc, item) => acc + item.price, 0);
-  priceStats.lowestPrice = Math.min(...pricePoints.map((item) => item.price));
-  priceStats.highestPrice = Math.max(...pricePoints.map((item) => item.price));
-  priceStats.averagePrice = Number((sum / pricePoints.length).toFixed(2));
+  // Lasketaan tilastot päivitetyistä hintatiedoista
+  priceStats.highestPrice = Math.max(...pricePoints.map((item) => item.price * taxMultiplier));
+  priceStats.lowestPrice = Math.min(...pricePoints.map((item) => item.price * taxMultiplier));
+  priceStats.averagePrice = pricePoints.reduce((acc, item) => acc + item.price * taxMultiplier, 0) / pricePoints.length;
+
+  // Etsitään korkeimman ja matalimman hinnan tunnit (esimerkki)
+  priceStats.highestPriceHour = pricePoints.find((item) => item.price * taxMultiplier === priceStats.highestPrice).hour;
+  priceStats.lowestPriceHour = pricePoints.find((item) => item.price * taxMultiplier === priceStats.lowestPrice).hour;
 };
+
+function applyPulseEffect(element) {
+  if (!(element instanceof HTMLElement)) {
+    return;
+  }
+
+  element.classList.add("pulse-effect");
+
+  const animationDuration = 400;
+  setTimeout(() => {
+    element.classList.remove("pulse-effect");
+    console.log("Pulse effect completed and class removed.");
+  }, animationDuration);
+}
 
 // DOM-toiminnot
 const displayPriceStats = () => {
   // Apufunktio, joka lisää asettaa kaksi desimaalia ja korvaa pisteen pilkulla
   const formatPrice = (price) => price.toFixed(2).replace(".", ",");
+  const priceLevels = ["price-high", "price-moderate", "price-low"];
 
-  document.getElementById("averagePrice").textContent = formatPrice(priceStats.averagePrice);
-  document.getElementById("lowestPrice").textContent = formatPrice(priceStats.lowestPrice);
-  document.getElementById("highestPrice").textContent = formatPrice(priceStats.highestPrice);
-  document.getElementById("currentPrice").textContent = formatPrice(priceStats.currentPrice);
+  const lowestPriceLabel = document.querySelector('label[for="lowestPrice"]');
+  const highestPriceLabel = document.querySelector('label[for="highestPrice"]');
+
+  const averagePriceValue = document.getElementById("averagePrice");
+  const lowestPriceValue = document.getElementById("lowestPrice");
+  const highestPriceValue = document.getElementById("highestPrice");
+  const currentPriceValue = document.getElementById("currentPrice");
+
+  highestPriceLabel.textContent = `Kalleinta klo ${priceStats.highestPriceHour}-${(parseInt(priceStats.highestPriceHour) + 1)
+    .toString()
+    .padStart(2, "0")}`;
+  lowestPriceLabel.textContent = `Halvinta klo ${priceStats.lowestPriceHour}-${(parseInt(priceStats.lowestPriceHour) + 1)
+    .toString()
+    .padStart(2, "0")}`;
+
+  averagePriceValue.textContent = formatPrice(priceStats.averagePrice);
+  priceLevels.forEach((level) => averagePriceValue.classList.remove(level));
+  averagePriceValue.classList.add(determinePriceLevel(priceStats.averagePrice));
+
+  lowestPriceValue.textContent = formatPrice(priceStats.lowestPrice);
+  priceLevels.forEach((level) => lowestPriceValue.classList.remove(level));
+  lowestPriceValue.classList.add(determinePriceLevel(priceStats.lowestPrice));
+
+  highestPriceValue.textContent = formatPrice(priceStats.highestPrice);
+  priceLevels.forEach((level) => highestPriceValue.classList.remove(level));
+  highestPriceValue.classList.add(determinePriceLevel(priceStats.highestPrice));
+
+  currentPriceValue.textContent = formatPrice(priceStats.currentPrice);
+  priceLevels.forEach((level) => currentPriceValue.classList.remove(level));
+  currentPriceValue.classList.add(determinePriceLevel(priceStats.currentPrice));
 };
 
 const createAndDisplayTable = (pricePoints) => {
@@ -76,23 +123,28 @@ const createAndDisplayTable = (pricePoints) => {
       priceCell.textContent = priceWithoutTax;
       priceValue = parseFloat(priceWithoutTax);
     }
-
-    if (priceValue >= settings.expensive) {
-      priceCell.classList.add("price-high");
-    } else if (priceValue >= settings.moderate) {
-      priceCell.classList.add("price-medium");
-    } else if (priceValue < settings.moderate) {
-      priceCell.classList.add("price-low");
-    }
+    priceCell.classList.add(determinePriceLevel(priceValue));
   });
   let container = document.getElementById("priceTable");
   var notificationArea = document.getElementById("notificationArea");
   notificationArea.style.display = "none"; // Tehdään näkyväksi
   container.innerHTML = "";
   container.appendChild(table);
+  container.style.display = "block"; // Tehdään näkyväksi
+  applyPulseEffect(container);
 };
 
-const showNotification = (message) => {
+const determinePriceLevel = (price) => {
+  if (price >= settings.expensive) {
+    return "price-high";
+  } else if (price >= settings.moderate) {
+    return "price-moderate";
+  } else if (price < settings.moderate) {
+    return "price-low";
+  }
+};
+
+export const showNotification = (message) => {
   var canvasContainer = document.getElementById("priceCanvas").parentElement;
   canvasContainer.style.display = "none";
   let container = document.getElementById("priceTable");
@@ -153,16 +205,25 @@ const filterPricesByDate = (pricePoints, date) => {
     let itemDate = item.date;
     return itemDate === dateString;
   });
+  console.log(filteredData);
   return filteredData;
 };
 
+
 const plotGraph = (pricePoints) => {
-  var canvasContainer = document.getElementById("priceCanvas").parentElement;
+  const canvasContainer = document.getElementById("priceCanvas").parentElement;
   canvasContainer.style.display = "block"; // Palautetaan näkyviin
-  const labels = pricePoints.map((item) => item.hour);
-  const dataPoints = pricePoints.map((item) => item.price);
+  const date = new Date(pricePoints[0].date).toLocaleDateString("fi-FI");
+
+  const labels = [];
+  const dataPoints = [];
+  for (const item of pricePoints) {
+    labels.push(item.hour);
+    dataPoints.push(item.price);
+  }
+
   const data = {
-    labels: labels,
+    labels,
     datasets: [
       {
         label: "c/kWh",
@@ -173,9 +234,10 @@ const plotGraph = (pricePoints) => {
       },
     ],
   };
+
   const config = {
     type: "bar",
-    data: data,
+    data,
     options: {
       borderRadius: 10,
       responsive: true,
@@ -185,14 +247,46 @@ const plotGraph = (pricePoints) => {
         },
         title: {
           display: true,
-          text: "Sähkön hinta (c/KWh)",
+          text: "Sähkön hinta - " + date,
+        },
+        tooltip: {
+          callbacks: {
+            title: function (tooltipItems) {
+              let hour = tooltipItems[0].label;
+              return `klo ${hour}-${(parseInt(hour) + 1).toString().padStart(2, "0")}`;
+            },
+          },
+        },
+      },
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: "Kellonaika",
+          },
+          grid: {
+            display: false, // Poistaa x-akselin ruudukon näkyvistä
+          },
+        },
+        y: {
+          title: {
+            display: true,
+            text: "c/KWh",
+          },
+          grid: {
+            display: true, // Poistaa y-akselin ruudukon näkyvistä
+          },
         },
       },
     },
   };
+
+  // Tuhoaa vanhan kaavion, jos se on olemassa
   if (appState.priceChart) {
     appState.priceChart.destroy();
   }
+
+  // Luo uuden kaavion
   appState.priceChart = new Chart(document.getElementById("priceCanvas"), config);
 };
 
@@ -205,8 +299,6 @@ const initializeApp = async () => {
     console.error("Virhe datan käsittelyssä:", error);
   }
 };
-
-
 
 // Sovelluksen käynnistys
 document.addEventListener("DOMContentLoaded", async (event) => {

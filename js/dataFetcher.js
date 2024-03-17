@@ -1,9 +1,10 @@
 import { key } from "./api-key.js";
-import { formatDateTimeComponents } from "./main.js";
+import { formatDateTimeComponents, showNotification } from "./main.js";
 
 export const fetchData = async () => {
   if (key === "YOUR_API_KEY") {
-    console.error("Please add your API key."); // Muutettu alertista console.erroriin paremman kehityskokemuksen saavuttamiseksi
+    // console.error("Please add your API key."); // Muutettu alertista console.erroriin paremman kehityskokemuksen saavuttamiseksi
+    showNotification("Please add your API key.");
     return;
   }
 
