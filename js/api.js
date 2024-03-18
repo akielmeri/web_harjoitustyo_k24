@@ -1,41 +1,29 @@
-// dataFetcher.js
+// api.js
 
 import { key } from "./api-key.js";
-import { showNotification } from "./uiController.js";
+import { showNotification } from "./updateUI.js";
 import { formatDateTimeComponents } from "./utilities.js";
 
-export const fetchData = async () => {
-  const { startPeriod, endPeriod } = createApiTimeInterval();
-  const proxyUrl = "https://corsproxy.io/?";
-  const apiUrl = `https://web-api.tp.entsoe.eu/api?${new URLSearchParams({
-    documentType: "A44",
-    in_Domain: "10YFI-1--------U",
-    out_Domain: "10YFI-1--------U",
-    periodStart: startPeriod,
-    periodEnd: endPeriod,
-    securityToken: key,
-  }).toString()}`; 
-  const completeUrl = proxyUrl + apiUrl;
+// Luo API-kutsulle tarvittavat aikaväliparametrit kolmen päivän ajalta.
+const createApiTimeInterval = (date = new Date()) => {
+  // Apufunktio, joka lisää nollan yksittäisen numeron eteen
+  const pad = (num) => num.toString().padStart(2, "0");
 
+  const year = date.getFullYear();
+  const month = pad(date.getMonth() + 1);
+  const startDay = pad(date.getDate() - 2);
+  const endDay = pad(date.getDate() + 1);
+  const hours = pad(date.getHours());
 
-  try {
-    const response = await fetch(completeUrl, { method: "GET", cache: "no-cache" });
-    if (!response.ok) {
-      throw new Error(`API request failed with status ${response.status}: ${response.statusText}`);
-    }
-    let xmlData = await response.text();
-    const lista = parseAndStorePriceData(xmlData);
-    return lista;
-  } catch (error) {
-    console.error("API call error:", error.message);
-    showNotification(error.message);
-  }
+  const startPeriod = `${year}${month}${startDay}${hours}00`;
+  const endPeriod = `${year}${month}${endDay}${hours}00`;
+  return { startPeriod, endPeriod };
 };
 
+// Parsii XML-muotoisen datan ja tallentaa hintatiedot taulukkoon
 const parseAndStorePriceData = (xmlData) => {
   const xmlDoc = new DOMParser().parseFromString(xmlData, "text/xml");
   const priceData = [];
-//   console.log(xmlDoc);
 
   // Etsitään kaikki period-elementit (1 per vuorokausi)
   const dayElements = xmlDoc.getElementsByTagName("Period");
@@ -47,7 +35,6 @@ const parseAndStorePriceData = (xmlData) => {
     let start = timeInterval.getElementsByTagName("start")[0].textContent;
     let startDateTime = new Date(start); // Vuorokauden ensimmäisen hintapisteen aika
     let hourOffSet = startDateTime.getHours(); // Tällä voimme määrittää ajat lopuille hintapisteille kasvattamalla sitä loopissa
-    // console.log("startDateTime: ", startDateTime);
 
     // Etsitään kaikki hintapisteet (point-elementit) tästä ajanjaksosta
     // point-elementit sisältävät sähkön hinnan ja position-elementin, josta voidaan laskea tunti
@@ -56,7 +43,7 @@ const parseAndStorePriceData = (xmlData) => {
     // Käydään läpi jokainen hintapiste
     for (let priceIndex = 0; priceIndex < priceElements.length; priceIndex++) {
       // Etsi hintapisteiden sijainti ja hinta
-      let position = priceElements[priceIndex].getElementsByTagName("position")[0].textContent;
+      // let position = priceElements[priceIndex].getElementsByTagName("position")[0].textContent;
       let priceAmount = priceElements[priceIndex].getElementsByTagName("price.amount")[0].textContent;
 
       // Muunna hinta(€/MWh -> c/kWh) ja luo uusi päivämäärä ja aika hintapisteelle
@@ -77,26 +64,35 @@ const parseAndStorePriceData = (xmlData) => {
         price: parseFloat(priceInCents),
       });
       hourOffSet++; // Kasvatetaan tuntia seuraavaa hintapistettä varten
-    //   console.log(priceData[priceData.length - 1]);
     }
   }
 
-  // Käsittele valittu päivämäärä ja hae nykyinen hinta
   return priceData;
 };
 
-const createApiTimeInterval = (date = new Date()) => {
-  // Apufunktio, joka lisää nollan yksittäisen numeron eteen
-  const pad = (num) => num.toString().padStart(2, "0");
+// Suorittaa API-kutsun hakeakseen sähkön hintatiedot kolmelta päivältä.
+export const fetchData = async () => {
+  const { startPeriod, endPeriod } = createApiTimeInterval();
+  const proxyUrl = "https://corsproxy.io/?";
+  const apiUrl = `https://web-api.tp.entsoe.eu/api?${new URLSearchParams({
+    documentType: "A44",
+    in_Domain: "10YFI-1--------U",
+    out_Domain: "10YFI-1--------U",
+    periodStart: startPeriod,
+    periodEnd: endPeriod,
+    securityToken: key,
+  }).toString()}`;
+  const completeUrl = proxyUrl + apiUrl;
 
-  const year = date.getFullYear();
-  const month = pad(date.getMonth() + 1);
-  const startDay = pad(date.getDate() - 2);
-  const endDay = pad(date.getDate() + 1);
-  const hours = pad(date.getHours());
-
-  const startPeriod = `${year}${month}${startDay}${hours}00`;
-  const endPeriod = `${year}${month}${endDay}${hours}00`;
-  console.log(startPeriod, endPeriod);
-  return { startPeriod, endPeriod };
+  try {
+    const response = await fetch(completeUrl, { method: "GET", cache: "no-cache" });
+    if (!response.ok) {
+      throw new Error(`API request failed with status ${response.status}: ${response.statusText}`);
+    }
+    let xmlData = await response.text();
+    return parseAndStorePriceData(xmlData);
+  } catch (error) {
+    console.error("API call error:", error.message);
+    showNotification(error.message);
+  }
 };
