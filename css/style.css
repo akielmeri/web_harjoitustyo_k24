@@ -13,9 +13,8 @@
   --element-border: 2px solid var(--secondary-color);
 }
 
-
 html {
-  font-size: calc(80% + 0.8vmin);  
+  font-size: calc(80% + 0.8vmin);
 }
 
 .content-container {
@@ -25,12 +24,38 @@ html {
   margin: 0 auto;
   max-width: 50rem;
   padding: 3rem;
-
+}
+#banner {
+  /* padding-left: 5rem; */
+  padding-top: 0.5rem;
+  padding-right: 2rem;
+  width: 70%;
+  display: flex;
+  /* justify-content: flex-start; */
+  justify-content: center;
+  align-items: center; /* Keskittää lapset pystysuunnassa */
+  /* border: var(--element-border); */
+}
+.bannerItem {
+  /* border: var(--element-border); */
+  /* display: flex;  */
+  align-items: center;
 }
 
-h3 {
-  margin-bottom: 1rem;
-  padding-top: 2rem;
+.logo {
+  height: 5rem;
+  width: auto;
+}
+h1 {
+  white-space: nowrap;
+  overflow: hidden;
+  font-variant: small-caps;
+  color: #04293a;
+}
+
+#aboutText{
+  width: 90%;
+  margin-bottom: 1.5rem;
 }
 
 body {
@@ -60,8 +85,6 @@ body {
   text-decoration: underline;
 }
 
-
-
 button {
   /* margin-top: 5px; */
   padding: 0.5rem 1rem;
@@ -69,7 +92,7 @@ button {
   background-color: var(--button-color);
   border: none;
   color: white;
-  transition: background-color 0.3s; 
+  transition: background-color 0.3s;
 }
 
 button:hover,

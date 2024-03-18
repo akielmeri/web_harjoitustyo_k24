@@ -2,6 +2,7 @@
   display: none;
 }
 
+
 #infoGrid {
   display: flex;
   flex-wrap: wrap;
@@ -38,7 +39,6 @@
   flex-wrap: wrap;
   gap: 2rem;
   width: 70%;
-  
 }
 
 #dateSelection button {
@@ -61,14 +61,13 @@
   margin: 0 auto;
   border-collapse: collapse;
   width: 100%;
-  
 }
 
 #priceTable table tr {
   padding: 0.5rem;
 }
 
-#priceTable table th{
+#priceTable table th {
   border-bottom: var(--element-border);
   padding: 0.5rem;
 }
@@ -78,7 +77,8 @@
   padding: 5px;
 }
 
-#priceTable table th:not(:first-child), #priceTable table td:not(:first-child) {
+#priceTable table th:not(:first-child),
+#priceTable table td:not(:first-child) {
   border-left: var(--element-border);
 }
 
@@ -93,7 +93,8 @@
 #priceCanvas {
   background-color: var(--table-header-color);
   border: var(--element-border);
-  margin-top: 2rem;
+  margin-top: 1.5rem;
+  margin-bottom: 2rem;
   width: 100%;
   border-radius: 10px;
   padding-left: 1rem;
@@ -107,7 +108,7 @@
   background-color: var(--alert-color);
   color: white;
   text-align: center;
-  display: none; 
+  display: none;
 }
 
 .price-low {
@@ -127,7 +128,7 @@
     transform: scale(1);
   }
   50% {
-    transform: scale(1.005); 
+    transform: scale(1.005);
   }
   100% {
     transform: scale(1);
@@ -135,9 +136,8 @@
 }
 
 .pulse-effect {
-  animation: pulse 0.4s forwards; 
+  animation: pulse 0.4s forwards;
 }
-
 
 @media (max-width: 1200px) {
   .content-container {
@@ -145,23 +145,24 @@
   }
 
   #infoGrid .infoItem {
-    flex-basis: calc(50% - 1rem); 
-    max-width: 100%; 
+    flex-basis: calc(50% - 1rem);
+    max-width: 100%;
   }
 }
-
 
 @media (max-width: 800px) {
   .content-container {
     padding: 1.5rem;
   }
   #infoGrid .infoItem {
-    flex-basis: calc(50% - 1rem); 
-    margin: 0.5rem 0; 
+    flex-basis: calc(50% - 1rem);
+    margin: 0.5rem 0;
   }
   #priceTable,
   #dateSelection,
-  #infoGrid {
+  #infoGrid,
+  #banner,
+  #aboutText {
     width: 100%;
   }
 }

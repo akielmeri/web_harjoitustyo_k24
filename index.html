@@ -3,21 +3,27 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Electricity Prices</title>
+    <title>HintaVirta</title>
+    <link rel="icon" type="image/x-icon" href="/images/favicon.png">
     <link rel="stylesheet" href="/css/style.css" />
     <link rel="stylesheet" href="/css/index.css">
   </head>
   <body>
     <nav id="menuBar">
-      <a href="index.html">Home</a>
-      <a href="settings.html">Settings</a>
-      <!-- <a href="about.html">About</a> -->
+      <a href="index.html">Etusivu</a>
+      <a href="settings.html">Asetukset</a>
+      <a href="about.html">Tietoja</a>
     </nav>
     <div class="content-container hidden">
-      <div id="introText">
-        <h3>Pörssisähkön hinnat tunneittain</h3>
+      <div id="banner">
+        <div class="bannerItem"><img src="/images/favicon.png" alt="" class="logo"></div>
+        <div class="bannerItem"><h1>HintaVirta</h1></div>   
       </div>
-
+<div id="aboutText">
+  <p>Tervetuloa HintaVirtaan – palveluun, joka tuo pörssisähkön hinnat suoraan näytöllesi! HintaVirrasta tarkistat eilisen, tämän päivän ja huomisen hinnat helposti ja nopeasti!</p>
+  <p>Päivän tärkeimmät hintatiedot ovat heti sivun alussa. Valitun päivän kaikki hintatiedot löytyvät taulukosta, sekä sen alapuolella olevaasta kuvaajasta.</p>
+  <p>Asetusvalikossamme voit asettaa henkilökohtaiset kipurajasi sähkön hinnoille. Kun hinta ylittää tai alittaa asettamasi rajat, muuttuu hinnan esitysväri, jolloin näet yhdellä silmäyksellä, onko energian kulutus juuri nyt edullista vai ei.</p>
+</div>
       <div id="infoGrid">
         <div class="infoItem">
             <label>Nykyinen hinta</label>
@@ -61,7 +67,7 @@
       <div id="priceChart">
         <canvas id="priceCanvas"></canvas>
 
-        <script type="module" src="/js/dataFetcher.js"></script>
+        <script type="module" src="/js/api.js"></script>
         <script type="module" src="/js/main.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
       </div>
