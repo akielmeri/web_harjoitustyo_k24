@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Peruuta-napin tapahtuma
   document.getElementById('cancel').addEventListener('click', () => {
-    window.history.back();
+    window.location.href = 'index.html';
   });
 });
 

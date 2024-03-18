@@ -1,12 +1,11 @@
 // api.js
 
-import { key } from "./api-key.js";    // Kommentoi pois, jos käytät omaa API-avainta
 import { showNotification } from "./updateUI.js";
 import { formatDateTimeComponents } from "./utilities.js";
 
 
-// Lisää oma API-avain tähän ja poista kommentointi
-// const key = "API-AVAIN"; 
+
+const key = "API-KEY"; // LISÄÄ API-AVAIN TÄHÄN
 
 
 // Luo API-kutsulle tarvittavat aikaväliparametrit kolmen päivän ajalta.
@@ -78,7 +77,11 @@ const parseAndStorePriceData = (xmlData) => {
 // Suorittaa API-kutsun hakeakseen sähkön hintatiedot kolmelta päivältä.
 export const fetchData = async () => {
   const { startPeriod, endPeriod } = createApiTimeInterval();
+
+  // HOX! Minulla ei ole kovin kokemusta tuosta CORS-ongelman ratkaisemisesta, niin tein tässä vaiheessa näin.
+  // Ei varmaan ole paras ratkaisu, mutta toimii tässä tapauksessa.
   const proxyUrl = "https://corsproxy.io/?";
+
   const apiUrl = `https://web-api.tp.entsoe.eu/api?${new URLSearchParams({
     documentType: "A44",
     in_Domain: "10YFI-1--------U",

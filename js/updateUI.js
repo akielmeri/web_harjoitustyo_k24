@@ -5,8 +5,8 @@ import { applyPulseEffect, determinePriceLevel } from "./utilities.js";
 
 // Tämän avulla näytetään ilmoitus käyttäjälle käyttöliittymässä.
 export const showNotification = (message) => {
-  var notificationArea = document.getElementById("notificationArea");
-  var priceChart = document.getElementById("priceCanvas").parentElement;
+  let notificationArea = document.getElementById("notificationArea");
+  let priceChart = document.getElementById("priceChart");
   let priceTable = document.getElementById("priceTable");
 
   // Piilotetaan kaavio ja taulukko
