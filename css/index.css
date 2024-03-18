@@ -55,6 +55,7 @@
   border: var(--element-border);
   display: none;
   background-color: var(--table-header-color);
+  font-size: calc(80% + 0.8vmin);
 }
 
 #priceTable table {
@@ -152,7 +153,7 @@
 
 @media (max-width: 800px) {
   .content-container {
-    padding: 1.5rem;
+    padding: 2rem;
   }
   #infoGrid .infoItem {
     flex-basis: calc(50% - 1rem);

@@ -71,7 +71,7 @@ export const fillAndDisplayTable = (pricePoints) => {
     let hour = item.hour;
     let endHour = parseInt(hour) + 1;
     let hourCell = row.insertCell();
-    hourCell.textContent = "klo " + hour + " - " + ("0" + endHour).slice(-2);
+    hourCell.textContent = hour + " - " + ("0" + endHour).slice(-2);
     let priceCell = row.insertCell();
     let price = settings.includeTax ? item.price * 1.24 : item.price;
     priceCell.textContent = price.toFixed(2).replace(".", ",");

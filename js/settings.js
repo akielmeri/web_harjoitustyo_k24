@@ -11,11 +11,12 @@ const displayNotification = (message, backgroundColor) => {
 // Funktio asetusten lataamiseen localStoragesta
 const loadSettings = () => {
   return {
-    expensivePriceThreshold: parseInt(localStorage.getItem('expensivePriceThreshold'), 10),
-    moderatePriceThreshold: parseInt(localStorage.getItem('moderatePriceThreshold'), 10),
-    includeTax: localStorage.getItem('includeTax') === 'true',
+    expensivePriceThreshold: parseInt(localStorage.getItem('expensivePriceThreshold'), 10) || 10, // Oletusarvo 10, jos ei ole asetettu
+    moderatePriceThreshold: parseInt(localStorage.getItem('moderatePriceThreshold'), 10) || 5, // Oletusarvo 5, jos ei ole asetettu
+    includeTax: localStorage.getItem('includeTax') !== null ? localStorage.getItem('includeTax') === 'true' : true, // Oletusarvo true, jos ei ole asetettu
   };
 };
+
 
 
 // Tällä tallennetaan käyttäjän asettamat asetukset localStorageen

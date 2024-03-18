@@ -1,8 +1,13 @@
 // api.js
 
-import { key } from "./api-key.js";
+import { key } from "./api-key.js";    // Kommentoi pois, jos käytät omaa API-avainta
 import { showNotification } from "./updateUI.js";
 import { formatDateTimeComponents } from "./utilities.js";
+
+
+// Lisää oma API-avain tähän ja poista kommentointi
+// const key = "API-AVAIN"; 
+
 
 // Luo API-kutsulle tarvittavat aikaväliparametrit kolmen päivän ajalta.
 const createApiTimeInterval = (date = new Date()) => {
